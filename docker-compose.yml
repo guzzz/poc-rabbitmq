@@ -1,0 +1,89 @@
+services:
+
+  api_db1:
+    image: api_db1:dev
+    container_name: api_db1
+    build:
+      dockerfile: Dockerfile-endpoint_1
+    command: uvicorn endpoint_1.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 8001:8001
+    # env_file:
+    #   - .env
+    depends_on:
+      - db1
+
+  api_db2:
+    image: api_db2:dev
+    container_name: api_db2
+    build:
+      dockerfile: Dockerfile-endpoint_2
+    command: uvicorn endpoint_2.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 8002:8001
+    # env_file:
+    #   - .env
+    depends_on:
+      - db2
+
+  # queue_orders:
+  #   image: queue:dev
+  #   build:
+  #     dockerfile: Dockerfile-consumer
+  #   container_name: queue-orders
+  #   command: 'python -u consumer.py'
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - api_orders
+
+  # redis_orders:
+  #   image: redis:6.2.5-alpine
+  #   container_name: redis-orders
+  #   ports:
+  #     - 6379:6379
+
+  db1:
+    image: postgres:16.1
+    container_name: db1
+    environment:
+      POSTGRES_USER: "postgresuser"
+      POSTGRES_PASSWORD: "postgrespwd"
+      POSTGRES_DB: "db1"
+    volumes:
+      - postgres-db1:/var/lib/postgresql/data
+    ports:
+        - 5432:5432
+
+  db2:
+    image: postgres:16.1
+    container_name: db2
+    environment:
+      POSTGRES_USER: "postgresuser"
+      POSTGRES_PASSWORD: "postgrespwd"
+      POSTGRES_DB: "db2"
+    volumes:
+      - postgres-db2:/var/lib/postgresql/data
+    ports:
+        - 5433:5432
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+volumes:
+  postgres-db1:
+    name: db1
+  postgres-db2:
+    name: db2
+  
