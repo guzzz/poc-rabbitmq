@@ -1,8 +1,7 @@
 
-from sqlalchemy.dialects.postgresql import MONEY
 from sqlalchemy import Column, Integer, String
 
-from app.config.database import Base
+from endpoint_1.config.database import Base
 
 
 class Order(Base):
@@ -11,4 +10,3 @@ class Order(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     description = Column(String)
     quantity = Column(Integer)
-    price = Column(MONEY)
