@@ -1,8 +1,8 @@
 services:
 
-  api_db1:
-    image: api_db1:dev
-    container_name: api_db1
+  api_endpoint_1:
+    image: api_endpoint_1:dev
+    container_name: api_endpoint_1
     build:
       dockerfile: endpoint_1/Dockerfile
     command: uvicorn endpoint_1.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
@@ -13,11 +13,12 @@ services:
     env_file:
       - endpoint_1/.env
     depends_on:
-      - db1
+      - db_postgres_1
+      - redis_data_store
 
-  api_db2:
-    image: api_db2:dev
-    container_name: api_db2
+  api_endpoint_2:
+    image: api_endpoint_2:dev
+    container_name: api_endpoint_2
     build:
       dockerfile: endpoint_2/Dockerfile
     command: uvicorn endpoint_2.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
@@ -27,63 +28,60 @@ services:
       - 8002:8001
     env_file:
       - endpoint_2/.env
-    # env_file:
-    #   - .env
     depends_on:
-      - db2
+      - db_postgres_2
+      - redis_data_store
 
-  # redis_orders:
-  #   image: redis:6.2.5-alpine
-  #   container_name: redis-orders
-  #   ports:
-  #     - 6379:6379
+  redis_data_store:
+    image: redis:6.2.5-alpine
+    container_name: redis_data_store
+    network_mode: host
+    ports:
+      - 6379:6379
 
-  db1:
+  db_postgres_1:
     image: postgres:16.1
-    container_name: db1
-    environment:
-      POSTGRES_USER: "postgresuser"
-      POSTGRES_PASSWORD: "postgrespwd"
-      POSTGRES_DB: "db1"
+    container_name: db_postgres_1
+    env_file:
+      - postgres_db_1/.env
     volumes:
       - postgres-db1:/var/lib/postgresql/data
     ports:
         - 5432:5432
 
-  db2:
+  db_postgres_2:
     image: postgres:16.1
-    container_name: db2
-    environment:
-      POSTGRES_USER: "postgresuser"
-      POSTGRES_PASSWORD: "postgrespwd"
-      POSTGRES_DB: "db2"
+    container_name: db_postgres_2
+    env_file:
+      - postgres_db_2/.env
     volumes:
       - postgres-db2:/var/lib/postgresql/data
     ports:
         - 5433:5432
 
-  rabbitmq:
+  rabbitmq_infra:
     image: rabbitmq:management
-    container_name: rabbitmq
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+    container_name: rabbitmq_infra
+    env_file:
+      - rabbitmq_infra/.env
     ports:
       - "5672:5672"
       - "15672:15672"
 
   queue_consumer:
-    network_mode: host
-    image: queue:dev
-    build:
-      dockerfile: consumer/Dockerfile
+    image: queue_consumer:dev
     container_name: queue_consumer
+    env_file:
+      - queue_consumer/.env
+    build:
+      dockerfile: queue_consumer/Dockerfile
     command: 'python -u main.py'
+    network_mode: host
     depends_on:
-      - rabbitmq
+      - rabbitmq_infra
 
 volumes:
   postgres-db1:
-    name: db1
+    name: db_postgres_1
   postgres-db2:
-    name: db2
+    name: db_postgres_2
