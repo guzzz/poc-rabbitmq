@@ -5,7 +5,7 @@ import os
 class RabbitmqConsumer:
     def __init__(self, callback) -> None:
         self.__host = os.getenv('RABBITMQ_HOST')
-        self.__port = int(os.getenv('RABBITMQ_PORT'))
+        self.__port = os.getenv('RABBITMQ_PORT')
         self.__username = os.getenv('RABBITMQ_USER')
         self.__password = os.getenv('RABBITMQ_PWD')
         self.__queue = os.getenv('RABBITMQ_QUEUE')
