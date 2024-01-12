@@ -34,8 +34,8 @@ class RabbitmqPublisher:
                 delivery_mode=2,
                 headers={
                     'x-retry': 0,
-                    'x-retry-limit': 5,
-                    'x-delay': 10000
+                    'x-retry-limit': int(os.getenv('RABBITMQ_RETRY_LIMIT')),
+                    'x-delay': int(os.getenv('RABBITMQ_DELAY'))
                 }
             )
         )
