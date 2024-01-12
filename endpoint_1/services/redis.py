@@ -1,4 +1,5 @@
 import os
+import json
 
 from redis import Redis
 from structlog import get_logger
@@ -27,7 +28,11 @@ class RedisService:
 
     def get_value(self, key):
         log.info(f"[REDIS] Getting key: {key}")
-        return self.__redis.get(key)
+        result = self.__redis.get(key)
+        if result:
+            result = result.decode('utf8').replace("'", '"')
+            return json.loads(result)
+        return None
 
     def set_value(self, key, value):
         log.info(f"[REDIS] Setting key: {key}")
