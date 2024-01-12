@@ -15,6 +15,7 @@ services:
     depends_on:
       - db_postgres_1
       - redis_data_store
+      - rabbitmq_infra
 
   api_endpoint_2:
     image: api_endpoint_2:dev
@@ -35,7 +36,7 @@ services:
   redis_data_store:
     image: redis:6.2.5-alpine
     container_name: redis_data_store
-    network_mode: host
+    # network_mode: host
     ports:
       - 6379:6379
 
@@ -60,7 +61,9 @@ services:
         - 5433:5432
 
   rabbitmq_infra:
-    image: rabbitmq:management
+    image: rabbitmq-delayed-message-exchange:dev
+    build:
+      dockerfile: rabbitmq_infra/Dockerfile
     container_name: rabbitmq_infra
     env_file:
       - rabbitmq_infra/.env
@@ -76,7 +79,6 @@ services:
     build:
       dockerfile: queue_consumer/Dockerfile
     command: 'python -u main.py'
-    network_mode: host
     depends_on:
       - rabbitmq_infra
 
