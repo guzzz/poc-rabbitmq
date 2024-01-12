@@ -18,5 +18,5 @@ process = ProcessorService()
 
 @app.get("/")
 async def root():
-    process.run()
+    process.start()
     return {"message": "Hello World"}
