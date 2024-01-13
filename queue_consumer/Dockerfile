@@ -11,4 +11,4 @@ COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project
-COPY queue_consumer/ $WORKSPACE
+COPY ./queue_consumer/ $WORKSPACE
