@@ -81,9 +81,33 @@ services:
     command: 'python -u main.py'
     depends_on:
       - rabbitmq_infra
+      - mongodb
+
+  mongodb:
+    image: mongo:7.0.5
+    container_name: mongodb
+    env_file:
+      - mongodb/.env
+    volumes:
+      - mongodb-data:/data/db
+    ports:
+      - 27017:27017
+
+  mongo-express:
+    image: mongo-express:1.0.2-20
+    container_name: mongo-express
+    env_file:
+      - mongo_express/.env
+    depends_on:
+      - mongodb 
+    ports:
+      - 8081:8081
 
 volumes:
   postgres-db1:
     name: db_postgres_1
   postgres-db2:
     name: db_postgres_2
+  mongodb-data:
+    name: mongodb-data
+
