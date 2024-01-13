@@ -1,7 +1,16 @@
 import pika
-from pika.exchange_type import ExchangeType
 import time
 import os
+import sys
+sys.path.append("..")
+
+from pika.exchange_type import ExchangeType
+
+from services.historic_service import HistoricService
+
+
+historic = HistoricService()
+
 
 class RabbitmqConsumer:
     def __init__(self, callback) -> None:
@@ -24,7 +33,8 @@ class RabbitmqConsumer:
             credentials=pika.PlainCredentials(
                 username=self.__username,
                 password=self.__password
-            )
+            ),
+            heartbeat=1800
         )
         time.sleep(10)
         channel = pika.BlockingConnection(connection_parameters).channel()
@@ -79,11 +89,10 @@ def minha_callback(ch, method, properties, body):
     retry_limit = properties.headers.get('x-retry-limit')
     if retries < retry_limit:
         print('PROCESSEI')
-        print(properties)
+        historic.save(body)
         back_to_queue(ch, method, retries, body)
     else:
         print('RALEI')
-        print(properties)
         ch.basic_nack(delivery_tag=method.delivery_tag, multiple=False, requeue=False)
 
 
