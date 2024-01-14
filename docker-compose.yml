@@ -60,6 +60,16 @@ services:
     ports:
         - 5433:5432
 
+  db_postgres_endput:
+    image: postgres:16.1
+    container_name: db_postgres_endput
+    env_file:
+      - postgres_db_endput/.env
+    volumes:
+      - postgres-db-endput:/var/lib/postgresql/data
+    ports:
+        - 5434:5432
+
   rabbitmq_infra:
     image: rabbitmq-delayed-message-exchange:dev
     build:
@@ -82,6 +92,7 @@ services:
     depends_on:
       - rabbitmq_infra
       - mongodb
+      - db_postgres_endput
 
   mongodb:
     image: mongo:7.0.5
@@ -108,6 +119,8 @@ volumes:
     name: db_postgres_1
   postgres-db2:
     name: db_postgres_2
+  postgres-db-endput:
+    name: db_postgres_endput
   mongodb-data:
     name: mongodb-data
 

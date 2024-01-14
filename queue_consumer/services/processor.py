@@ -4,10 +4,12 @@ import json
 from structlog import get_logger
 from fastapi.encoders import jsonable_encoder
 from services.historic import HistoricService
+from repositories.orders import OrderRepository
 
 log = get_logger()
 
 historic = HistoricService()
+order_repo = OrderRepository()
 
 
 class ProcessorService:
@@ -25,6 +27,7 @@ class ProcessorService:
         attempts = processing_info.get('processing_attempts') + 1
         processing_times = processing_info.get('processing_times') 
         if attempts == processing_times:
+            order_repo.create(message.get('order'))
             return self.processed_successfully(message, attempts)
         elif attempts == 5 and attempts < processing_times:
             return self.should_cancel_process(message, attempts)

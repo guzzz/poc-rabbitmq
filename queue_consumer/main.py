@@ -7,6 +7,10 @@ import pika
 from structlog import get_logger
 from services.processor import ProcessorService
 from services.rabbitmq import RabbitmqConsumer
+from models import order
+from config.postgresdb import engine
+
+order.Base.metadata.create_all(bind=engine)
 
 processor = ProcessorService()
 log = get_logger()
