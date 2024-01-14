@@ -1,37 +1,38 @@
 services:
 
-  api_endpoint_1:
-    image: api_endpoint_1:dev
-    container_name: api_endpoint_1
+  api_system_1:
+    image: api_system_1:dev
+    container_name: api_system_1
     build:
-      dockerfile: endpoint_1/Dockerfile
-    command: uvicorn endpoint_1.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
+      dockerfile: api_system_1/Dockerfile
+    command: uvicorn api_system_1.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
     volumes:
       - .:/usr/src/app
     ports:
       - 8001:8001
     env_file:
-      - endpoint_1/.env
+      - api_system_1/.env
     depends_on:
       - db_postgres_1
       - redis_data_store
       - rabbitmq_infra
 
-  api_endpoint_2:
-    image: api_endpoint_2:dev
-    container_name: api_endpoint_2
+  api_system_2:
+    image: api_system_2:dev
+    container_name: api_system_2
     build:
-      dockerfile: endpoint_2/Dockerfile
-    command: uvicorn endpoint_2.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
+      dockerfile: api_system_2/Dockerfile
+    command: uvicorn api_system_2.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
     volumes:
       - .:/usr/src/app
     ports:
       - 8002:8001
     env_file:
-      - endpoint_2/.env
+      - api_system_2/.env
     depends_on:
       - db_postgres_2
       - redis_data_store
+      - rabbitmq_infra
 
   redis_data_store:
     image: redis:6.2.5-alpine
