@@ -12,5 +12,5 @@ class MessageRepository:
         self._messages = database.message
 
     def create(self, message):
-        log.info("[DB] Registering MESSAGE...")
+        log.info("[MONGODB] Registering message...")
         return self._messages.insert_one(message)

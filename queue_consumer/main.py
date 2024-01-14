@@ -1,15 +1,16 @@
-import pika
-import time
-import os
 import sys
 sys.path.append("..")
 
-from pika.exchange_type import ExchangeType
+import os
+import pika
+import time
 
+from structlog import get_logger
+from pika.exchange_type import ExchangeType
 from services.historic_service import HistoricService
 
-
 historic = HistoricService()
+log = get_logger()
 
 
 class RabbitmqConsumer:
@@ -65,10 +66,11 @@ class RabbitmqConsumer:
         return channel
     
     def start(self):
-        print(f'Listen RabbitMQ on Port {self.__port}')
+        print(f'[CONSUMER - start] Listen RabbitMQ on Port {self.__port}')
         self.__channel.start_consuming()
 
 def back_to_queue(channel, method, attempts, body):
+    log.info("[CONSUMER - RabbitMQ] Sending back to queue...")
     channel.basic_ack(delivery_tag=method.delivery_tag, multiple=False)
     channel.basic_publish(
         exchange= os.getenv('RABBITMQ_EXCHANGE'),
@@ -88,11 +90,11 @@ def minha_callback(ch, method, properties, body):
     retries = properties.headers.get('x-retry')
     retry_limit = properties.headers.get('x-retry-limit')
     if retries < retry_limit:
-        print('PROCESSEI')
+        log.info("[CONSUMER - ok] Ready to process...")
         historic.save(body)
         back_to_queue(ch, method, retries, body)
     else:
-        print('RALEI')
+        log.warning("[CONSUMER - exceed attempts] Sending to DLQ...")
         ch.basic_nack(delivery_tag=method.delivery_tag, multiple=False, requeue=False)
 
 

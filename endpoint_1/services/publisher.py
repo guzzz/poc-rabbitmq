@@ -2,6 +2,7 @@ import pika
 import time
 import os
 
+
 class RabbitmqPublisher:
     def __init__(self) -> None:
         self.__host = os.getenv('RABBITMQ_HOST')
