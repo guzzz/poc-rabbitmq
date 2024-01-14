@@ -1,6 +1,8 @@
 
 import json
 import os
+import uuid
+import random
 
 from structlog import get_logger
 from fastapi.encoders import jsonable_encoder
@@ -34,14 +36,22 @@ class OrderService:
 
     def create_message(self, order):
         message = {
-            'system': self.__system_name,
-            'database_resource': self.__database,
-            'schema_resource': self.__schema,
-            'table_resource': self.__table,
+            'message_id': str(uuid.uuid4()),
+            'processing': {
+                'processing_attempts': 0,
+                'processing_info': '',
+                'processing_times': self.generate_processing_times(order.get('security_check')),
+            },
+            'origin': {
+                'system': self.__system_name,
+                'database_resource': self.__database,
+                'schema_resource': self.__schema,
+                'table_resource': self.__table,
+            },
             'order': order,
         }
-        return json.dumps(message) 
-    
+        return json.dumps(message)
+
     def send_to_queue(self, message):        
         try:
             log.info("[PROCESSOR - RabbitMQ] Sending message to queue...")
@@ -50,3 +60,9 @@ class OrderService:
         except:
             log.error("[PROCESSOR - RabbitMQ] Publisher fail...")
             return False
+        
+    def generate_processing_times(self, should_process):
+        if should_process:
+            return random.randint(1, 5)
+        else:
+            return 6

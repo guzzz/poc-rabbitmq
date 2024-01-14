@@ -11,8 +11,6 @@ class HistoricService:
     def __init__(self):
         self.database = MessageRepository()
 
-    def save(self, message_in_bytes):
-        message_json = jsonable_encoder(message_in_bytes)
-        message = json.loads(message_json)
+    def save(self, message):
         message['processed_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
         return self.database.create(message)

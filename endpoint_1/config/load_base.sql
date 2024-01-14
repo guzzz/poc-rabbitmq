@@ -1,7 +1,7 @@
 
 INSERT INTO public.orders(id, product, price, created_at, security_check)VALUES(nextval('orders_id_seq'::regclass), 'Produto A', 50, current_timestamp, '1');
 INSERT INTO public.orders(id, product, price, created_at, security_check)VALUES(nextval('orders_id_seq'::regclass), 'Produto B', 100, current_timestamp, '1');
--- INSERT INTO public.orders(id, product, price, created_at, security_check)VALUES(nextval('orders_id_seq'::regclass), 'Produto C', 150, current_timestamp, '1');
+INSERT INTO public.orders(id, product, price, created_at, security_check)VALUES(nextval('orders_id_seq'::regclass), 'Produto C', 150, current_timestamp, '0');
 -- INSERT INTO public.orders(id, product, price, created_at, security_check)VALUES(nextval('orders_id_seq'::regclass), 'Produto D', 200, current_timestamp, '1');
 -- INSERT INTO public.orders(id, product, price, created_at, security_check)VALUES(nextval('orders_id_seq'::regclass), 'Produto E', 250, current_timestamp, '1');
 -- INSERT INTO public.orders(id, product, price, created_at, security_check)VALUES(nextval('orders_id_seq'::regclass), 'Produto F', 300, current_timestamp, '1');
