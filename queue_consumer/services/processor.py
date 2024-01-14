@@ -61,4 +61,5 @@ class ProcessorService:
 
     def convert_message_to_bytes(self, json_message):
         del json_message['_id']
+        del json_message['processed_at']
         return json.dumps(json_message)
