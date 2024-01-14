@@ -4,6 +4,6 @@ uvicorn
 sqlalchemy
 pika==1.3.2
 redis==3.5.3
-structlog==21.1.0
+structlog==24.1.0
 psycopg2==2.9.9
 pymongo==4.6.1
