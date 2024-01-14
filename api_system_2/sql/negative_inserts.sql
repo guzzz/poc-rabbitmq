@@ -1,0 +1,1 @@
+INSERT INTO public.orders(id, product, price, created_at, security_check)VALUES(nextval('orders_id_seq'::regclass), concat('Product ', CAST ((random()*100000) AS INTEGER )), CAST ((random()*1000) AS INTEGER ), current_timestamp, '0');
