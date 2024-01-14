@@ -1,6 +1,6 @@
 from structlog import get_logger
 
-from config.db import mongoclient
+from config.mongodb import mongoclient
 
 log = get_logger()
 
