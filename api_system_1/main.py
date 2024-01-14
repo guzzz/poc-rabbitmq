@@ -13,10 +13,11 @@ order.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 process = ProcessorService()
 
-@app.get("/")
-async def root():
+
+@app.post("/execute", status_code=200)
+async def execute():
     process.start()
-    return {"message": "Hello World"}
+    return {"System 1": "Running process"}
 
 
 @app.post("/feed", status_code=201)
