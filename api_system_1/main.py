@@ -1,38 +1,16 @@
 
 from fastapi import FastAPI
-from sqlalchemy import text
-
-from api_system_1.services.processor import ProcessorService
 from api_system_1.models import order
 from api_system_1.config.database import engine
-from api_system_1.schemas.feed import FeedRequest
+from api_system_1.controllers import general_controller
 
 
 order.Base.metadata.create_all(bind=engine)
 
+
 app = FastAPI()
-process = ProcessorService()
-
-
-@app.post("/execute", status_code=200)
-async def execute():
-    process.start()
-    return {"System 1": "Running process"}
-
-
-@app.post("/feed", status_code=201)
-async def feed(request: FeedRequest):
-    with engine.connect() as con:
-        insert = ''
-        for i in range(0, request.positive_inserts):
-            with open("api_system_1/sql/positive_inserts.sql") as file:
-                insert = insert + file.read()
-        for i in range(0, request.negative_inserts):
-            with open("api_system_1/sql/negative_inserts.sql") as file:
-                insert = insert + file.read()
-        insert = insert + 'commit;'
-        con.execute(text(insert))
-    return {
-        'positive_inserts': request.positive_inserts,
-        'negative_inserts': request.negative_inserts
-    }
+app.include_router(
+    general_controller.router,
+    prefix="/v0",
+    tags=["System 1 - Orders Process"]
+)
