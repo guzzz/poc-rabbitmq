@@ -29,4 +29,10 @@ start_queue_separate:
 
 clear:
 	redis-cli FLUSHALL
+	docker volume prune
 	docker volume rm db_postgres_1 db_postgres_2 db_postgres_endput mongodb-data redis-data
+
+prune:
+	docker container prune
+	docker image prune
+	docker volume prune
