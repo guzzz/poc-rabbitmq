@@ -4,7 +4,7 @@ from sqlalchemy import text
 
 from api_system_1.services.processor import ProcessorService
 from api_system_1.config.database import engine
-from api_system_1.schemas.feed import FeedRequest
+from api_system_1.schemas.insert_data import InsertDataRequest
 
 
 router = APIRouter()
@@ -12,7 +12,7 @@ process = ProcessorService()
 
 
 @router.post("/insert-data", status_code=201)
-async def fill_database(request: FeedRequest):
+async def fill_database(request: InsertDataRequest):
     with engine.connect() as con:
         insert = ''
         for i in range(0, request.positive_inserts):

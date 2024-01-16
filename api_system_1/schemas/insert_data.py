@@ -2,6 +2,6 @@
 from pydantic import BaseModel
 
 
-class FeedRequest(BaseModel):
+class InsertDataRequest(BaseModel):
     positive_inserts: int
     negative_inserts: int
