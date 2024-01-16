@@ -7,8 +7,8 @@ log = get_logger()
 redis_service = RedisService()
 order_service = OrderService()
 
-FINISHED_PROCESS = 'FINISHED'
-ERROR_PROCESS = 'ERROR'
+FINISHED_PROCESS = os.getenv('FINISHED_PROCESS_INFO')
+ERROR_PROCESS = os.getenv('ERROR_PROCESS_INFO')
 
 class ProcessorService:
 
@@ -25,12 +25,18 @@ class ProcessorService:
                 start_id = execution_info.get('last_id')
         else:
             start_id = 0
-        self.process(start_id)
+        self.run(start_id)
 
-    def process(self, start_id):
+    def run(self, start_id):
         success, last_id = order_service.send_orders_to_queue(start_id)
         if success:
             log.info("[PROCESSOR] processed OK")
             redis_service.save_execution_info(start_id, last_id, FINISHED_PROCESS)
         else:
-            return redis_service.save_execution_info(start_id, last_id, ERROR_PROCESS)
+            redis_service.save_execution_info(start_id, last_id, ERROR_PROCESS)
+
+    def clear(self):
+        redis_service.clear_execution_info()
+
+    def unblock(self):
+        redis_service.unblock_execution_info()

@@ -8,6 +8,7 @@ from datetime import datetime
 log = get_logger()
 
 REDIS_EXPIRATION_TIME: int = os.getenv("REDIS_EXPIRATION_TIME")
+FINISHED_PROCESS = os.getenv('FINISHED_PROCESS_INFO')
 DATABASE = os.getenv("DATABASE_RESOURCE")
 SCHEMA = os.getenv("SCHEMA_RESOURCE")
 TABLE = os.getenv("TABLE_RESOURCE")
@@ -54,6 +55,17 @@ class RedisService:
 
     def get_execution_info(self):
         return self.get_value(self.__redis_key)
+
+    def clear_execution_info(self):
+        return self.delete_value(self.__redis_key)
+
+    def unblock_execution_info(self):
+        execution_info = self.get_execution_info()
+        if execution_info:
+            start_id = execution_info.get('start_id')
+            last_id = execution_info.get('last_id')
+            status_process = FINISHED_PROCESS
+            self.save_execution_info(start_id, last_id, status_process)
 
     def create_redis_payload(self, start_id, last_id, status):
         payload = {
