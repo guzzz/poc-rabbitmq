@@ -24,8 +24,8 @@ class OrderService:
         self.__schema = os.getenv("SCHEMA_RESOURCE")
         self.__table = os.getenv("TABLE_RESOURCE")
     
-    def send_orders_to_queue(self, last_id):
-        orders, last_id = self.__repo.list(last_id)
+    def send_orders_to_queue(self, offset):
+        orders, last_id = self.__repo.list(offset)
         for order in orders:
             order_json = jsonable_encoder(order)
             message = self.create_message(order_json)

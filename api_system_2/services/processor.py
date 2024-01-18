@@ -27,8 +27,8 @@ class ProcessorService:
             last_id = 0
         self.run(last_id)
 
-    def run(self, last_id):
-        success, last_id = order_service.send_orders_to_queue(last_id)
+    def run(self, last_id_processed):
+        success, last_id = order_service.send_orders_to_queue(last_id_processed)
         if success:
             log.info("[PROCESSOR] processed OK")
             redis_service.save_execution_info(last_id, FINISHED_PROCESS)

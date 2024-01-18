@@ -13,9 +13,9 @@ class OrderRepository:
     def __init__(self):
         self.__db: Session = get_db_session()
 
-    def list(self, last_id):
+    def list(self, offset):
         log.info(f"[POSTGRESQL] Getting orders...")
-        orders = self.__db.query(Order).offset(last_id).all()
+        orders = self.__db.query(Order).offset(offset).all()
         last_record = self.__db.query(Order).order_by(Order.id.desc()).first()
         if last_record:
             return orders, last_record.id
