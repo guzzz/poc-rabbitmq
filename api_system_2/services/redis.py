@@ -49,8 +49,8 @@ class RedisService:
         log.info(f"[REDIS] Deleting key: {key}")
         self.__redis.delete(key)
 
-    def save_execution_info(self, start_id, last_id , status_process):
-        redis_payload = self.create_redis_payload(start_id, last_id, status_process)
+    def save_execution_info(self, last_id, status_process):
+        redis_payload = self.create_redis_payload(last_id, status_process)
         self.set_value(self.__redis_key, redis_payload)
 
     def get_execution_info(self):
@@ -62,18 +62,16 @@ class RedisService:
     def unblock_execution_info(self):
         execution_info = self.get_execution_info()
         if execution_info:
-            start_id = execution_info.get('start_id')
             last_id = execution_info.get('last_id')
             status_process = FINISHED_PROCESS
-            self.save_execution_info(start_id, last_id, status_process)
+            self.save_execution_info(last_id, status_process)
 
-    def create_redis_payload(self, start_id, last_id, status):
+    def create_redis_payload(self, last_id, status):
         payload = {
             'database_resource': DATABASE,
             'schema_resource': SCHEMA,
             'table_resource': TABLE,
             'start_date': str(datetime.now()),
-            'start_id': start_id,
             'last_id': last_id,
             'status_process': status
         }
