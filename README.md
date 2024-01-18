@@ -52,14 +52,14 @@ Sumário
 
 ## O projeto
 
-Este projeto é uma prova de conceito para explorar e exercitar diversas funcionalidades pautas em diversas tecnologias e suas integrações. O projeto é composto por:
+Este projeto é uma prova de conceito para explorar e exercitar diversas funcionalidades pautadas em diversas tecnologias e suas integrações. O projeto é composto por:
 
 1. Um banco de dados Redis. Focado em orquestrar os processos que serão rodados nas APIs.
-2. API 1 utilizando fastAPI. Essa API terá um auxiliador para preencher o DB conectado à ela e rodará um processo para gerar mensagens.
+2. API 1 utilizando fastAPI. Essa API terá um endpoint para preencher o DB conectado à ela e alguns endpoints envolvendo o processo de gerar mensagens e enviar mensagens para nossa fila primária.
 3. Banco de dados PostgreSQL. Responsável por guardar informações basica de um pedido, possivelmente um pedido de uma loja ou marketplace.
 4. API 2 utilizando fastAPI. Esta API é uma cópia da anterior. Contudo, foi inserida para demonstrar processamento paralelo e inserção dupla numa mesma exchange/fila.
 5. Banco de dados PostgreSQL. Semelhante ao ponto 3, contudo relacionado à API 2.
-6. Fila primária utilizando RabbitMQ. Está configurada com um plugin de delay de mensagens de 10 segundos para voltar para a fila.
+6. Fila primária utilizando RabbitMQ. Está configurada com um plugin de delay de mensagens de 10 segundos (configurável) para voltar para a fila.
 7. Fila DLQ  utilizando RabbitMQ. É trigada pela falha de processamento da filha primária após processar sem sucesso durante 5x.
 8. Consumidor em Python. É acionado a partir da fila primária. Tem a função de logar tudo que roda nele no mongo e exercer a função de guardar as informações recebidas da mensagem no PostgreSQL.
 9. Um banco de dados mongoDB. Responsável por servir de log para tudo que é consumido no consumer. Nesse banco há um TTL configurável.
@@ -91,9 +91,9 @@ Para testarmos os "retrys" da fila, criamos uma lógica dentro das APIs das quai
 
 1. Em cada linha do banco lida, o sistema verifica o campo "security_check".
 2. CASO esse campo esteja pré preenchido como TRUE, a API anexa à mensagem um numero máximo de processamento que varia de 1 a 5x. ( Dado que o numero máximo aceito pelo consumidor em termos de processamento de uma mesma mensagem é 5 )
-3. CASO esse campo esteja pré preenchido como FALSE, o a API anexa à mensagem um número máximo de processamento de 6x. Sabendo que esse numero extrapola o máximo de tentativas, saberemos que essa mensagem irá falhar.
+3. CASO esse campo esteja pré preenchido como FALSE, a API anexa à mensagem um número máximo de processamento de 6x. Sabendo que esse numero extrapola o máximo de tentativas, saberemos que essa mensagem irá falhar.
 4. Na prática, as mensagem com "security_check" = FALSE sempre irão falhar no processamento do consumidor e nunca chegarão ao nosso banco de dados destino.
-5. Outra maneira encontrar as linhas "security_check" = FALSE é verificar ao termino do processamento se elas se encontram na DLQ.
+5. Outra maneira de encontrar as linhas "security_check" = FALSE é verificar ao termino do processamento se elas se encontram na DLQ.
 
 ![Image Alt text](/readme_images/fastapi.png)
 
