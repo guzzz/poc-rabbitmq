@@ -31,14 +31,14 @@ async def fill_database(request: InsertDataRequest):
 @router.post("/process/run", status_code=200)
 async def execute_process():
     process.start()
-    return {"System 1": "Running process"}
+    return {"System 2": "Running process"}
 
 @router.post("/process/clear", status_code=200)
 async def clear_process_info():
     process.clear()
-    return {"System 1": "Process cleared"}
+    return {"System 2": "Process cleared"}
 
 @router.post("/process/unblock", status_code=200)
 async def unblock_status_error():
     process.unblock()
-    return {"System 1": "Process unblocked"}
+    return {"System 2": "Process unblocked"}
