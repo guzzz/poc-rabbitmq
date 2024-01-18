@@ -81,6 +81,10 @@ Tanto os bancos DB1 e DB2 possuem estruturas iguais. Segue algumas particularida
 
 ![Image Alt text](/readme_images/postgresql.png)
 
+_DB1_: http://localhost:5432
+
+_DB2_: http://localhost:5433
+
 ---
 
 ## APIs Sistema 1 e Sistema 2
@@ -97,15 +101,21 @@ Para testarmos os "retrys" da fila, criamos uma lógica dentro das APIs das quai
 
 ![Image Alt text](/readme_images/fastapi.png)
 
+_API1_: http://localhost:8001/docs
+
+_API2_: http://localhost:8002/docs
+
 ---
 
 ## Orquestrador de processos
 
 Com o intuito de criar uma funcionalidade para permitir que nossas APIs processem somente linhas do banco que não foram previamente processadas, utilizamos o Redis para orquestrar esses processos.
 
-A estrutura do Redis é bem enxuta, teremos pouca informação contida nele. A função principal dessa estrutura é registrar de qual linha a qual linha do banco houve um processamento. Assim, na próxima vez que precisarmso processar algo, partiremos da ultima linha processada + 1.
+A estrutura do Redis é bem enxuta, teremos pouca informação contida nela. A função principal dessa estrutura é registrar qual a última linha do banco que foi processada. Assim, na próxima vez que precisarmso processar algo, partiremos da ultima linha processada + 1.
 
-![Image Alt text](/readme_images/redis.png)
+![Image Alt text](/readme_images/orquestrador.png)
+
+_Redis_: http://localhost:6379
 
 ---
 
@@ -121,6 +131,8 @@ Funcionamento de seu processamento:
 3. Caso a mensagem ultrapasse o limite máximo de processamentos sem sucesso, a mensagem irá cair na "fila morta", também chamada de DLQ. 
 
 ![Image Alt text](/readme_images/rabbitMQ.png)
+
+_RabbitMQ_: http://localhost:15672
 
 ---
 
@@ -155,11 +167,13 @@ A estrutura do log engloba algumas coisas:
 
 ### Visualização
 
-Há uma ferramenta visual para enxergarmos o conteúdo desse banco de dados. A ferramenta "Mongo Express" pode ser encontrada em: "http://localhost:8081/".
+Há uma ferramenta visual para enxergarmos o conteúdo desse banco de dados. A ferramenta "Mongo Express" está disponível para verificação.
 
 Ao selecionar o database "local" e collection "messagem", podemos encontrar nossos logs. Nessa página podemos também pegar um "message_id" e pesquisar na area de busca para descobrir o histórico de processamento de uma mensagem.
 
 ![Image Alt text](/readme_images/mongodb2.png)
+
+_Mongo Express_: http://localhost:8081
 
 ---
 
@@ -178,6 +192,8 @@ Nos detalhes desse banco, podemos perceber sua simplicidade, seguindo o padrão 
 Dentro do resultado buscado nesse campo, veremos apenas campos com o security_check abaixo. Teremos também a quantidade de linhas esperada para os inputs de securities positivos dentros das APIs.
 
 ![Image Alt text](/readme_images/endput2.png)
+
+_DB Endput_: http://localhost:5434
 
 ---
 
